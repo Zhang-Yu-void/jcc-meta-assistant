@@ -44,14 +44,20 @@ pnpm test
 # 抓取 TapTap → 小红书 → NGA，写入 data/live/bundle.json
 pnpm crawl
 
-# 抓取 + 通知 publisher 热更新
+# 本机小红书（Playwright 正文，推荐）
+pnpm xhs:check                 # 查看是否过期（过期发邮件）
+./scripts/xhs-login-sync.sh    # 登录 + 同步服务器 + 推送
+./scripts/xhs-watch.sh         # 给 crontab 用的巡检
+./scripts/crawl-and-push-aliyun.sh
+
+# 抓取 + 通知 publisher 热更新（服务器侧）
 ./scripts/crawl-and-publish.sh
 ```
 
 | 源 | 说明 |
 |----|------|
 | TapTap | 公开 feed API（`TAPTAP_GROUP_ID=213275`） |
-| 小红书 | 需 `XHS_COOKIE` |
+| 小红书 | **推荐** `pnpm xhs:login` + Playwright 抓正文；降级可用签名头 |
 | NGA | 需 `NGA_COOKIE`（403 时） |
 
 棋子名映射见 `data/champions-registry.json`，可按赛季扩充。

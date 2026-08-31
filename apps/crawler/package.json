@@ -7,12 +7,17 @@
   },
   "scripts": {
     "crawl": "tsx src/cli.ts",
+    "xhs:login": "tsx src/xhs-login.ts",
+    "xhs:login-sync": "tsx src/xhs-login-sync.ts",
+    "xhs:check": "tsx src/xhs-check.ts",
+    "xhs:crawl": "XHS_MODE=playwright tsx src/cli.ts --skip taptap,nga",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@jcc/meta-schema": "workspace:*",
-    "cheerio": "^1.0.0"
+    "cheerio": "^1.0.0",
+    "playwright": "^1.62.1"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",

@@ -7,4 +7,6 @@ ios/
 .env
 ecosystem.config.cjs
 data/live/
+data/xhs/
+apps/data/
 coverage/

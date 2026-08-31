@@ -1,0 +1,40 @@
+{
+  "msg": "成功",
+  "data": {
+    "has_more": true,
+    "items": [
+      {
+        "model_type": "note",
+        "id": "6a93a30e00000000040288c2",
+        "xsec_token": "token",
+        "note_card": {
+          "display_title": "自然之力上分必看！8月30日最新阵容榜单！",
+          "user": { "nickname": "时光指引" },
+          "interact_info": {
+            "liked_count": "1096",
+            "collected_count": "655",
+            "comment_count": "71"
+          }
+        }
+      },
+      {
+        "model_type": "note",
+        "id": "abc123",
+        "note_card": {
+          "display_title": "今天天气不错",
+          "user": { "nickname": "路人" },
+          "interact_info": { "liked_count": "1" }
+        }
+      },
+      {
+        "model_type": "note",
+        "id": "def456",
+        "note_card": {
+          "display_title": "【森林月男】T0阵容推荐",
+          "user": { "nickname": "攻略号" },
+          "interact_info": { "liked_count": "200" }
+        }
+      }
+    ]
+  }
+}

@@ -60,6 +60,44 @@ export function extractChampionNames(text: string, registry: MetaBundle): string
   return found.slice(0, 10);
 }
 
+/** When title has no hero names, infer units from traits / common aliases. */
+export function extractUnitsByTraits(text: string, registry: MetaBundle): string[] {
+  const aliasTraits: Array<{ needle: string; trait?: string; names?: string[] }> = [
+    { needle: "约德尔", trait: "约德尔" },
+    { needle: "自然之力", names: ["霞", "韦鲁斯", "妮蔻", "璐璐"] },
+    { needle: "双蚀", names: ["韦鲁斯"] },
+    { needle: "焚诀", names: ["阿狸", "辛德拉", "拉克丝"] },
+    { needle: "森林", trait: "森林" },
+    { needle: "法师", trait: "法师" },
+    { needle: "枪手", trait: "枪手" },
+    { needle: "战士", trait: "战士" },
+  ];
+
+  const found: string[] = [];
+  for (const a of aliasTraits) {
+    if (!text.includes(a.needle)) continue;
+    if (a.names) {
+      for (const n of a.names) if (!found.includes(n)) found.push(n);
+    }
+    if (a.trait) {
+      for (const c of registry.champions) {
+        if (c.traits.includes(a.trait) && !found.includes(c.name)) found.push(c.name);
+      }
+    }
+  }
+
+  if (!found.length) {
+    for (const t of registry.traits) {
+      if (!text.includes(t.name)) continue;
+      for (const c of registry.champions) {
+        if (c.traits.includes(t.name) && !found.includes(c.name)) found.push(c.name);
+      }
+    }
+  }
+
+  return found.slice(0, 8);
+}
+
 export function parsePostHint(post: RawPostHint, registry: MetaBundle): ParsedCompHint | null {
   const text = `${post.title}\n${post.body}`.trim();
   if (!isRelevantPost(text)) return null;
@@ -68,7 +106,8 @@ export function parsePostHint(post: RawPostHint, registry: MetaBundle): ParsedCo
   const tier = extractTier(text);
   const winRateHint = extractWinRate(text);
   const pickRateHint = extractPickRate(text, post.engagement ?? 0);
-  const unitNames = extractChampionNames(text, registry);
+  let unitNames = extractChampionNames(text, registry);
+  if (!unitNames.length) unitNames = extractUnitsByTraits(text, registry);
 
   return {
     name,

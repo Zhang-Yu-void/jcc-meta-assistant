@@ -11,8 +11,11 @@ import {
 import { mergeHintsIntoBundle } from "./merge.js";
 import { parseTapFeedJson } from "./adapters/taptap.js";
 import { parseNgaThreadList } from "./adapters/nga.js";
-import { parseXhsSearchHtml } from "./adapters/xhs.js";
+import { parseXhsSearchHtml, parseXhsSearchNotesJson } from "./adapters/xhs.js";
+import { extractNoteDescFromJson, mergeDetailIntoHint, rankHintsForDetail } from "./adapters/xhs-detail.js";
 import fixture from "../fixtures/taptap-feed.json" with { type: "json" };
+import xhsFixture from "../fixtures/xhs-search-notes.json" with { type: "json" };
+import xhsFeed from "../fixtures/xhs-note-feed.json" with { type: "json" };
 
 describe("parse", () => {
   const registry = loadRegistry();
@@ -81,5 +84,33 @@ describe("adapters", () => {
     const html = `<div>金铲铲之战 S级阵容 法师主C推荐</div>`;
     const hints = parseXhsSearchHtml(html);
     expect(hints.some((h) => h.title.includes("阵容"))).toBe(true);
+  });
+
+  it("parses xhs search/notes JSON", () => {
+    const hints = parseXhsSearchNotesJson(xhsFixture as never);
+    expect(hints.length).toBe(2);
+    expect(hints[0].title).toContain("阵容");
+    expect(hints[0].engagement).toBeGreaterThan(1000);
+  });
+
+  it("extracts note desc from feed JSON", () => {
+    const desc = extractNoteDescFromJson(xhsFeed);
+    expect(desc).toContain("韦鲁斯");
+    const merged = mergeDetailIntoHint(
+      { platform: "xhs", title: "自然之力", body: "作者：x", url: "u" },
+      desc!,
+    );
+    expect(merged.body).toContain("霞");
+  });
+
+  it("ranks hints by engagement", () => {
+    const ranked = rankHintsForDetail(
+      [
+        { platform: "xhs", title: "a", body: "", url: "1", engagement: 1 },
+        { platform: "xhs", title: "b", body: "", url: "2", engagement: 99 },
+      ],
+      1,
+    );
+    expect(ranked[0].title).toBe("b");
   });
 });

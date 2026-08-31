@@ -29,6 +29,19 @@ export type CrawlContext = {
   xhsKeyword: string;
   ngaCookie?: string;
   xhsCookie?: string;
+  /** From browser Network → search/notes request (signature is request-bound, refresh often). */
+  xhsXs?: string;
+  xhsXsCommon?: string;
+  xhsXt?: string;
+  xhsRapParam?: string;
+  xhsB3TraceId?: string;
+  xhsXrayTraceId?: string;
+  xhsSearchId?: string;
+  xhsSessionId?: string;
+  xhsSearchUrl?: string;
+  xhsMode?: "playwright" | "signed";
+  xhsStorageState?: string;
+  xhsDetailLimit?: number;
   rateLimitMs: number;
 };
 

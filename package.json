@@ -5,6 +5,10 @@
     "test": "pnpm -r run test",
     "typecheck": "pnpm -r run typecheck",
     "crawl": "pnpm --filter @jcc/crawler crawl",
+    "xhs:login": "pnpm --filter @jcc/crawler xhs:login",
+    "xhs:login-sync": "pnpm --filter @jcc/crawler xhs:login-sync",
+    "xhs:check": "pnpm --filter @jcc/crawler xhs:check",
+    "xhs:crawl": "pnpm --filter @jcc/crawler xhs:crawl",
     "publisher": "pnpm --filter @jcc/publisher start"
   },
   "engines": { "node": ">=20" },

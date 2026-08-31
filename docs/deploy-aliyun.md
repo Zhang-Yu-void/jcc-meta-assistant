@@ -43,7 +43,24 @@ location /v1/ {
 
 ## 4. 定时爬虫（cron）
 
-每 30 分钟抓取并热更新：
+**推荐（本机 Mac）：** Playwright 登录后一键抓正文并推阿里云：
+
+```bash
+# 首次 / 收到过期邮件后：扫码登录 + 同步服务器 + 推送阵容
+./scripts/xhs-login-sync.sh
+
+# 随时查看登录是否有效（无效会发邮件，冷却默认 6 小时）
+pnpm xhs:check
+
+# 定时巡检（建议写入 Mac crontab，每小时）
+# 0 * * * * cd /path/to/jcc-meta-assistant && ./scripts/xhs-watch.sh >>/tmp/xhs-watch.log 2>&1
+```
+
+会话：`data/xhs/storageState.json`；状态：`data/xhs/status.json`（会 scp 到服务器，纳入健康监测）。
+
+可选：`XHS_DETAIL_LIMIT=10`、`XHS_HEADED=1`、`XHS_EMAIL_COOLDOWN_MIN=360`、`XHS_AUTO_PUSH=0`（登录后不自动推送）。
+
+**服务器 cron（降级，仅 TapTap/签名头，无 Playwright 正文）：**
 
 ```cron
 */30 * * * * cd /opt/jcc-meta-assistant && set -a && . /etc/jcc-meta.env && set +a && ./scripts/crawl-and-publish.sh >> /var/log/jcc-crawl.log 2>&1
@@ -66,16 +83,18 @@ http://8.141.20.44:8084/jcc/v1/meta
 - `http://127.0.0.1:8787/health` — JCC Meta Publisher
 - `http://127.0.0.1:8084/jcc/health` — Nginx `/jcc/` 反代
 
-## 6. Cookie 获取
+## 6. 小红书 / NGA 凭证
 
-**NGA：** 浏览器登录 bbs.nga.cn → 开发者工具 → Network → 任意请求 → 复制 `Cookie` 头到 `NGA_COOKIE`
+**小红书（推荐 Playwright，见 §4）：** 无需手抄 `x-s`。
 
-**小红书：** 登录 xiaohongshu.com → 同样复制 Cookie 到 `XHS_COOKIE`（会过期，需定期更新）
+**小红书（降级 signed）：** Network → `search/notes` 复制 Cookie + `x-s` / `x-s-common` / `x-t` 等（签名易过期）。
+
+**NGA：** 浏览器登录 bbs.nga.cn → 复制 `Cookie` → `NGA_COOKIE`
 
 ## 7. 数据源优先级
 
-1. TapTap 论坛 feed（公开 API，默认可用）
-2. 小红书搜索（需 Cookie）
-3. NGA 板块列表（需 Cookie 或访客通过）
+1. 小红书（本机 Playwright：搜索 + 笔记正文）
+2. TapTap 论坛 feed
+3. NGA 板块列表
 
 合规提示：请遵守各平台服务条款，控制抓取频率（`CRAWLER_RATE_MS` ≥ 800）。

@@ -6,6 +6,7 @@ import { loadRegistry } from "./champions.js";
 import { crawlTapTap } from "./adapters/taptap.js";
 import { crawlNga } from "./adapters/nga.js";
 import { crawlXhs } from "./adapters/xhs.js";
+import { crawlXhsPlaywright } from "./adapters/xhs-playwright.js";
 import { mergeHintsIntoBundle } from "./merge.js";
 import { parsePostHint } from "./parse.js";
 import type { AdapterResult, CrawlContext } from "./types.js";
@@ -28,6 +29,7 @@ export type CrawlRunReport = {
 
 function defaultContext(registryPath?: string): CrawlContext {
   loadRegistry(registryPath);
+  const mode = (process.env.XHS_MODE ?? "playwright").toLowerCase();
   return {
     registry: loadRegistry(registryPath),
     userAgent: process.env.CRAWLER_USER_AGENT ?? "",
@@ -36,6 +38,18 @@ function defaultContext(registryPath?: string): CrawlContext {
     xhsKeyword: process.env.XHS_KEYWORD ?? "金铲铲之战 阵容",
     ngaCookie: process.env.NGA_COOKIE,
     xhsCookie: process.env.XHS_COOKIE,
+    xhsXs: process.env.XHS_X_S,
+    xhsXsCommon: process.env.XHS_X_S_COMMON,
+    xhsXt: process.env.XHS_X_T,
+    xhsRapParam: process.env.XHS_X_RAP_PARAM,
+    xhsB3TraceId: process.env.XHS_X_B3_TRACEID,
+    xhsXrayTraceId: process.env.XHS_X_XRAY_TRACEID,
+    xhsSearchId: process.env.XHS_SEARCH_ID,
+    xhsSessionId: process.env.XHS_SESSION_ID,
+    xhsSearchUrl: process.env.XHS_SEARCH_URL,
+    xhsMode: mode === "signed" ? "signed" : "playwright",
+    xhsStorageState: process.env.XHS_STORAGE_STATE,
+    xhsDetailLimit: Number(process.env.XHS_DETAIL_LIMIT ?? 10),
     rateLimitMs: Number(process.env.CRAWLER_RATE_MS ?? 800),
   };
 }
@@ -47,7 +61,10 @@ export async function runCrawl(opts: CrawlRunOptions = {}): Promise<CrawlRunRepo
 
   if (!skip.has("taptap")) results.push(await crawlTapTap(ctx));
   if (!skip.has("nga")) results.push(await crawlNga(ctx));
-  if (!skip.has("xhs")) results.push(await crawlXhs(ctx));
+  if (!skip.has("xhs")) {
+    if (ctx.xhsMode === "signed") results.push(await crawlXhs(ctx));
+    else results.push(await crawlXhsPlaywright(ctx));
+  }
 
   const hints = results.flatMap((r) => r.hints);
   const errors = results.flatMap((r) => r.errors);
