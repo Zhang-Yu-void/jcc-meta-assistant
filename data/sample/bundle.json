@@ -16,7 +16,8 @@
   "traits": [
     { "id": "mage", "name": "法师", "breakpoints": [3, 5, 7] },
     { "id": "gunner", "name": "枪手", "breakpoints": [2, 4, 6] },
-    { "id": "tank", "name": "坦克", "breakpoints": [2, 4, 6] }
+    { "id": "tank", "name": "坦克", "breakpoints": [2, 4, 6] },
+    { "id": "warrior", "name": "战士", "breakpoints": [2, 4, 6] }
   ],
   "compositions": [
     {

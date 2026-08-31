@@ -47,7 +47,7 @@ describe("parseMetaBundle", () => {
             pickRateHint: 0.1,
             sources: [],
             core: [],
-            units: [],
+            units: ["x"],
             priority: [],
             notes: "",
           },
