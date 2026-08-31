@@ -60,10 +60,19 @@ pnpm xhs:check
 
 可选：`XHS_DETAIL_LIMIT=10`、`XHS_HEADED=1`、`XHS_EMAIL_COOLDOWN_MIN=360`、`XHS_AUTO_PUSH=0`（登录后不自动推送）。
 
-**服务器 cron（降级，仅 TapTap/签名头，无 Playwright 正文）：**
+**服务器 cron：默认不要开。** 阿里云若无 Playwright，signed 抓取只有标题、几乎拼不出阵容，会把本机推上去的完整 `bundle.json` 覆盖成 1 条。
+
+若必须在服务器跑降级爬虫：
+
+```bash
+# 至少跳过小红书；脚本还会拒绝「比现有更少阵容」的结果（FORCE_CRAWL=1 可强制）
+export CRAWLER_SKIP=xhs
+./scripts/crawl-and-publish.sh
+```
 
 ```cron
-*/30 * * * * cd /opt/jcc-meta-assistant && set -a && . /etc/jcc-meta.env && set +a && ./scripts/crawl-and-publish.sh >> /var/log/jcc-crawl.log 2>&1
+# 不推荐；确需时务必带 CRAWLER_SKIP=xhs
+# */30 * * * * cd /opt/jcc-meta-assistant && set -a && . /etc/jcc-meta.env && set +a && CRAWLER_SKIP=xhs ./scripts/crawl-and-publish.sh >> /var/log/jcc-crawl.log 2>&1
 ```
 
 ## 5. 客户端配置
