@@ -1,0 +1,10 @@
+{
+  "name": "jcc-meta-assistant",
+  "private": true,
+  "scripts": {
+    "test": "pnpm -r run test",
+    "typecheck": "pnpm -r run typecheck"
+  },
+  "engines": { "node": ">=20" },
+  "packageManager": "pnpm@9.15.0"
+}
