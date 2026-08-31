@@ -1,28 +1,31 @@
-# Crawler Adapters (v1 stubs)
+# Crawler adapters
 
-Future adapters will crawl third-party platforms and produce a validated `MetaBundle` JSON file.
-
-## Priority order
-
-1. **TapTap** (`taptap.ts`) — primary source
-2. **小红书 / XHS** (`xhs.ts`) — secondary
-3. **NGA** (`nga.ts`) — tertiary
-
-## Output path
-
-Adapters write merged results to:
-
-```
-data/live/bundle.json
-```
-
-After updating the bundle on disk, trigger a hot reload:
+Production crawlers live in **`apps/crawler`**. Run:
 
 ```bash
-curl -X POST http://localhost:8787/v1/admin/reload \
-  -H "Authorization: Bearer $ADMIN_TOKEN"
+pnpm crawl
+# or on server:
+./scripts/crawl-and-publish.sh
 ```
 
-## Compliance
+## Environment
 
-Crawlers must respect each platform's Terms of Service, robots.txt, and rate limits. Do not scrape authenticated or paywalled content without explicit permission. This project is for personal/educational use; production deployments need legal review.
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `TAPTAP_GROUP_ID` | `213275` | 金铲铲 TapTap 论坛 group id |
+| `TAPTAP_PAGES` | `3` | Feed pages to fetch |
+| `NGA_FID` | `510461` | NGA 金铲铲板块 fid |
+| `NGA_COOKIE` | — | Logged-in cookie if guest blocked |
+| `XHS_COOKIE` | — | Required for 小红书 search |
+| `XHS_KEYWORD` | `金铲铲之战 阵容` | Search keyword |
+| `CRAWLER_RATE_MS` | `800` | Min ms between HTTP requests |
+| `PUBLISHER_RELOAD_URL` | — | POST reload after crawl |
+| `ADMIN_TOKEN` | — | Bearer token for reload |
+
+## Priority
+
+1. TapTap forum feed API  
+2. 小红书 search (cookie)  
+3. NGA thread list (guest or cookie)
+
+Output: `data/live/bundle.json` → publisher `DATA_PATH`.

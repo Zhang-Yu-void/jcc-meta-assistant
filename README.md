@@ -12,7 +12,8 @@ apps/publisher/        # Node 发布服务（部署阿里云）
 packages/meta-schema/  # 共享 Zod Schema / 类型
 packages/meta-match/   # 本地阵容匹配引擎
 data/sample/           # 示例阵容数据
-data/live/             # 爬虫输出目录（后续）
+data/live/             # 爬虫输出（bundle.json 本地生成）
+apps/crawler/          # TapTap / 小红书 / NGA 爬虫
 ```
 
 设计文档：`docs/superpowers/specs/2026-08-31-jcc-meta-assistant-design.md`
@@ -36,6 +37,26 @@ pnpm --filter mobile start
 ```bash
 pnpm test
 ```
+
+## 爬虫与自动更新
+
+```bash
+# 抓取 TapTap → 小红书 → NGA，写入 data/live/bundle.json
+pnpm crawl
+
+# 抓取 + 通知 publisher 热更新
+./scripts/crawl-and-publish.sh
+```
+
+| 源 | 说明 |
+|----|------|
+| TapTap | 公开 feed API（`TAPTAP_GROUP_ID=213275`） |
+| 小红书 | 需 `XHS_COOKIE` |
+| NGA | 需 `NGA_COOKIE`（403 时） |
+
+棋子名映射见 `data/champions-registry.json`，可按赛季扩充。
+
+阿里云 cron / pm2 部署见 [docs/deploy-aliyun.md](docs/deploy-aliyun.md)。
 
 ## 客户端使用
 
@@ -77,15 +98,13 @@ curl -X POST https://your-domain/v1/admin/reload \
   -H "Authorization: Bearer $ADMIN_TOKEN"
 ```
 
-## 后续爬虫（规划中）
+## 爬虫适配器
 
-适配器目录：`apps/publisher/adapters/`
+实现位于 `apps/crawler`，优先级：**TapTap → 小红书 → NGA**。
 
-优先级：**TapTap 论坛 → 小红书 → NGA 金铲铲板块**
+输出 `data/live/bundle.json` 后调用 reload 接口。小红书/NGA 需配置 Cookie，详见 [docs/deploy-aliyun.md](docs/deploy-aliyun.md)。
 
-输出路径：`data/live/bundle.json`，然后调用 reload 接口。
-
-> 正式接入须遵守各平台服务条款；本仓库首版仅提供 stub 适配器与写入约定。
+> 请遵守各平台服务条款，合理设置 `CRAWLER_RATE_MS`。
 
 ## 打 Android APK
 

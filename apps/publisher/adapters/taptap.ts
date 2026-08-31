@@ -1,4 +1,4 @@
-/** Future crawler adapter — not implemented in v1. Output must be MetaBundle JSON. */
+/** Use `pnpm --filter @jcc/crawler crawl` instead. */
 export async function fetchRaw(): Promise<never> {
-  throw new Error("Adapter not implemented: taptap");
+  throw new Error("Moved to @jcc/crawler — run: pnpm crawl");
 }

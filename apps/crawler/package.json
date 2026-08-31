@@ -1,0 +1,23 @@
+{
+  "name": "@jcc/crawler",
+  "version": "0.1.0",
+  "type": "module",
+  "bin": {
+    "jcc-crawl": "./src/cli.ts"
+  },
+  "scripts": {
+    "crawl": "tsx src/cli.ts",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@jcc/meta-schema": "workspace:*",
+    "cheerio": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.5"
+  }
+}

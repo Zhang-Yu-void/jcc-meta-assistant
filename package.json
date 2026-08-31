@@ -3,7 +3,9 @@
   "private": true,
   "scripts": {
     "test": "pnpm -r run test",
-    "typecheck": "pnpm -r run typecheck"
+    "typecheck": "pnpm -r run typecheck",
+    "crawl": "pnpm --filter @jcc/crawler crawl",
+    "publisher": "pnpm --filter @jcc/publisher start"
   },
   "engines": { "node": ">=20" },
   "packageManager": "pnpm@9.15.0"

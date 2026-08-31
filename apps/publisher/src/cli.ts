@@ -1,11 +1,16 @@
 import path from "node:path";
+import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { createPublisher } from "./server.js";
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
+const liveBundle = path.join(root, "data/live/bundle.json");
+const sampleBundle = path.join(root, "data/sample/bundle.json");
 
 const port = Number(process.env.PORT ?? 8787);
 const dataPath =
   process.env.DATA_PATH ??
-  path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../../data/sample/bundle.json");
+  (existsSync(liveBundle) ? liveBundle : sampleBundle);
 const adminToken = process.env.ADMIN_TOKEN ?? "dev";
 
 const publisher = await createPublisher({ dataPath, adminToken, port });
