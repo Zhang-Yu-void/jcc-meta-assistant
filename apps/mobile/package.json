@@ -19,6 +19,7 @@
     "@react-navigation/elements": "^2.9.40",
     "@react-navigation/native": "^7.1.17",
     "expo": "~57.0.18",
+    "expo-build-properties": "^57.0.15",
     "expo-modules-core": "~57.0.14",
     "expo-status-bar": "~57.0.1",
     "react": "19.2.3",
