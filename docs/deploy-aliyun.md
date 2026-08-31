@@ -20,7 +20,7 @@ TAPTAP_GROUP_ID=213275
 NGA_FID=510461
 NGA_COOKIE=          # 从浏览器复制，NGA 403 时必填
 XHS_COOKIE=          # 从浏览器复制，启用小红书源
-XHS_KEYWORD=金铲铲之战 阵容
+XHS_KEYWORD="金铲铲之战 阵容"
 PUBLISHER_RELOAD_URL=http://127.0.0.1:8787/v1/admin/reload
 CRAWLER_RATE_MS=1000
 ```
@@ -51,11 +51,20 @@ location /v1/ {
 
 ## 5. 客户端配置
 
-平板 **设置** → Meta URL：
+平板 **设置** → Meta URL（当前服务器经 Nginx `:8084` 反代）：
 
 ```
-https://你的域名/v1/meta
+http://8.141.20.44:8084/jcc/v1/meta
 ```
+
+本机直连（仅服务器内）：`http://127.0.0.1:8787/v1/meta`
+
+## 5.1 健康监测
+
+已并入 `/opt/ruoyi/monitor/health-report.sh` 的 HTTP 探活：
+
+- `http://127.0.0.1:8787/health` — JCC Meta Publisher
+- `http://127.0.0.1:8084/jcc/health` — Nginx `/jcc/` 反代
 
 ## 6. Cookie 获取
 

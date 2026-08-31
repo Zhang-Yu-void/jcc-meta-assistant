@@ -5,4 +5,6 @@ android/
 ios/
 *.log
 .env
+ecosystem.config.cjs
+data/live/
 coverage/
