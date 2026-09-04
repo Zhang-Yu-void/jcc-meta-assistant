@@ -1,8 +1,8 @@
 # 金铲铲 Meta 助手
 
-Android 平板客户端 + 阿里云轻量发布服务。手动点选当前棋子，本地匹配高胜阵容并给出补强建议。
+Android 平板客户端 + 阿里云轻量发布服务。手动点选或授权截屏识别当前棋子，本地匹配高胜阵容并给出补强建议。
 
-> **产品边界：** 学习/复盘工具，需手动点选棋子，**非游戏内挂接**，不读取游戏进程、不截屏识图。
+> **产品边界：** 学习/复盘工具，**非游戏内挂接**，不读取游戏进程。对局识别仅使用用户授权的系统录屏，默认不把截图上传或送给 Vision。
 
 ## 仓库结构
 
@@ -11,8 +11,10 @@ apps/mobile/           # Expo React Native（Android APK）
 apps/publisher/        # Node 发布服务（部署阿里云）
 packages/meta-schema/  # 共享 Zod Schema / 类型
 packages/meta-match/   # 本地阵容匹配引擎
+packages/screen-match  # 24×24 NCC + HSV 匹配
 data/sample/           # 示例阵容数据
 data/live/             # 爬虫输出（bundle.json 本地生成）
+data/portraits/        # 英雄头像 PNG，crawler 据此重算指纹
 apps/crawler/          # TapTap / 小红书 / NGA 爬虫
 ```
 

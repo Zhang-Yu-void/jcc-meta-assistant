@@ -5,6 +5,7 @@ import sample from "../../../../data/sample/bundle.json";
 const META_KEY = "@jcc/meta";
 const URL_KEY = "@jcc/metaUrl";
 const SYNC_KEY = "@jcc/lastSync";
+const RECOGNIZE_KEY = "@jcc/recognizeEnabled";
 
 export function getSampleMeta(): MetaBundle {
   return parseMetaBundle(sample);
@@ -47,4 +48,12 @@ export async function resolveMeta(): Promise<{ bundle: MetaBundle; source: "cach
   const cached = await loadCachedMeta();
   if (cached) return { bundle: cached, source: "cache" };
   return { bundle: getSampleMeta(), source: "sample" };
+}
+
+export async function getRecognizeEnabled(): Promise<boolean> {
+  return (await AsyncStorage.getItem(RECOGNIZE_KEY)) === "1";
+}
+
+export async function setRecognizeEnabled(enabled: boolean): Promise<void> {
+  await AsyncStorage.setItem(RECOGNIZE_KEY, enabled ? "1" : "0");
 }

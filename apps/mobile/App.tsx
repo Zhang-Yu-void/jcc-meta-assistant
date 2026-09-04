@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { StatusBar } from "expo-status-bar";
 import { Text } from "react-native";
 import { MetaProvider } from "./src/context/MetaContext";
+import { RecognizeHost } from "./src/components/RecognizeHost";
 import { PickScreen } from "./src/screens/PickScreen";
 import { CompsScreen } from "./src/screens/CompsScreen";
 import { SettingsScreen } from "./src/screens/SettingsScreen";
@@ -24,6 +25,7 @@ const theme = {
 export default function App() {
   return (
     <MetaProvider>
+      <RecognizeHost />
       <NavigationContainer theme={theme}>
         <StatusBar style="light" />
         <Tab.Navigator
