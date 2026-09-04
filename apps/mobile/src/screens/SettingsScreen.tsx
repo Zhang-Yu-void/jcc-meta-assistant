@@ -4,22 +4,26 @@ import {
   Alert,
   Pressable,
   StyleSheet,
+  Switch,
   Text,
   TextInput,
   View,
 } from "react-native";
-import { getMetaUrl, setMetaUrl } from "../lib/metaStore";
+import { getMetaUrl, getRecognizeEnabled, setMetaUrl, setRecognizeEnabled } from "../lib/metaStore";
 import { useMeta } from "../context/MetaContext";
+import { ensureOverlayPermission, startRecognizeSession, stopRecognizeSession } from "../lib/recognizeSession";
 
 export function SettingsScreen() {
   const { bundle, source, lastSync, refreshFromUrl } = useMeta();
   const [url, setUrl] = useState("");
   const [syncing, setSyncing] = useState(false);
+  const [recognize, setRecognize] = useState(false);
 
   useEffect(() => {
     getMetaUrl().then((saved) => {
       if (saved) setUrl(saved);
     });
+    getRecognizeEnabled().then(setRecognize);
   }, []);
 
   const onSync = async () => {
@@ -39,9 +43,36 @@ export function SettingsScreen() {
     }
   };
 
+  const onToggleRecognize = async (value: boolean) => {
+    if (value) {
+      const overlay = await ensureOverlayPermission();
+      if (!overlay) {
+        Alert.alert("需要悬浮窗权限", "请允许显示在其他应用上层后再开启识别");
+        return;
+      }
+      await setRecognizeEnabled(true);
+      setRecognize(true);
+      const templates = bundle.champions
+        .filter((c) => c.fingerprint.length)
+        .map((c) => ({ id: c.id, name: c.name, fingerprint: c.fingerprint, cost: c.cost }));
+      const result = await startRecognizeSession(templates);
+      if (!result.ok) {
+        await setRecognizeEnabled(false);
+        setRecognize(false);
+        Alert.alert("识别未开启", result.message);
+        return;
+      }
+      Alert.alert("识别已开启", result.message);
+      return;
+    }
+    await setRecognizeEnabled(false);
+    setRecognize(false);
+    await stopRecognizeSession();
+  };
+
   return (
     <View style={styles.root}>
-      <Text style={styles.disclaimer}>学习/复盘工具 · 手动点选 · 非游戏内挂接</Text>
+      <Text style={styles.disclaimer}>学习/复盘工具 · 用户授权截屏 · 非外挂</Text>
       <View style={styles.card}>
         <Text style={styles.label}>Meta URL</Text>
         <TextInput
@@ -60,6 +91,17 @@ export function SettingsScreen() {
             <Text style={styles.btnText}>立即更新</Text>
           )}
         </Pressable>
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.label}>对局识别</Text>
+        <View style={styles.row}>
+          <Text style={styles.line}>授权录屏 + 悬浮球</Text>
+          <Switch value={recognize} onValueChange={(v) => void onToggleRecognize(v)} />
+        </View>
+        <Text style={styles.note}>
+          金铲铲全屏对局，点右上角悬浮球看识别结果。抓帧前会短暂隐藏浮层。识别失败可继续手动点选。
+        </Text>
       </View>
 
       <View style={styles.card}>
@@ -109,5 +151,6 @@ const styles = StyleSheet.create({
   },
   btnText: { color: "#fff", fontWeight: "700", fontSize: 16 },
   line: { color: "#e2e8f0", fontSize: 14 },
+  row: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8 },
   note: { color: "#64748b", fontSize: 13, lineHeight: 20 },
 });

@@ -11,6 +11,9 @@ export const ChampionSchema = z.object({
   name: z.string().min(1),
   cost: z.number().int().min(1).max(5),
   traits: z.array(z.string()),
+  apiName: z.string().default(""),
+  portrait: z.string().default(""),
+  fingerprint: z.array(z.number()).default([]),
 });
 
 export const TraitSchema = z.object({

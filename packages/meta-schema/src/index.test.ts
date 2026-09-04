@@ -27,6 +27,8 @@ describe("parseMetaBundle", () => {
     });
     expect(bundle.version).toBe("2026.08.31.1");
     expect(bundle.compositions[0].tier).toBe("S");
+    expect(bundle.champions[0].fingerprint).toEqual([]);
+    expect(bundle.champions[0].portrait).toBe("");
   });
 
   it("rejects invalid tier", () => {

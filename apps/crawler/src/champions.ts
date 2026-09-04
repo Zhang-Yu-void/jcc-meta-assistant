@@ -29,7 +29,7 @@ export function ensureChampion(registry: MetaBundle, name: string): Champion {
   const existing = championByName(registry, name);
   if (existing) return existing;
   const id = slugify(name);
-  const champ: Champion = { id, name, cost: 3, traits: [] };
+  const champ: Champion = { id, name, cost: 3, traits: [], apiName: "", portrait: "", fingerprint: [] };
   registry.champions.push(champ);
   return champ;
 }

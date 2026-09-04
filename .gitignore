@@ -1,8 +1,11 @@
 node_modules/
 dist/
 .expo/
-android/
-ios/
+/android
+/ios
+apps/mobile/android/
+apps/mobile/ios/
+apps/mobile/modules/**/android/build/
 *.log
 .env
 ecosystem.config.cjs

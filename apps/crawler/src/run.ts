@@ -9,6 +9,7 @@ import { crawlXhs } from "./adapters/xhs.js";
 import { crawlXhsPlaywright } from "./adapters/xhs-playwright.js";
 import { mergeHintsIntoBundle } from "./merge.js";
 import { parsePostHint } from "./parse.js";
+import { applyPortraitFingerprints } from "./fingerprints.js";
 import type { AdapterResult, CrawlContext } from "./types.js";
 
 export type CrawlRunOptions = {
@@ -73,9 +74,10 @@ export async function runCrawl(opts: CrawlRunOptions = {}): Promise<CrawlRunRepo
     .filter((x): x is NonNullable<typeof x> => x != null);
 
   const bundle = mergeHintsIntoBundle(ctx.registry, parsed);
-  parseMetaBundle(bundle);
-
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
+  const portraitDir = process.env.PORTRAIT_DIR ?? path.join(root, "data/portraits");
+  applyPortraitFingerprints(bundle, portraitDir);
+  parseMetaBundle(bundle);
   const outputPath = opts.outputPath ?? path.join(root, "data/live/bundle.json");
   mkdirSync(path.dirname(outputPath), { recursive: true });
   writeFileSync(outputPath, JSON.stringify(bundle, null, 2), "utf-8");
